@@ -250,7 +250,7 @@
    CONFIG — 운영 시 이 블록만 수정
    ════════════════════════════════════════════════════════════════ */
 const CONFIG = {
-  API_URL: 'https://script.google.com/macros/s/AKfycbw5Aa7Tz_zj1QvF7xLEMvnLQWTjGer5E7qTRMeuLd-vegBXgbaDtpU9XWW4tVp5WlYg5A/exec',
+  API_URL: '',
   READ_MODE: 'api',            // 'api'(권장: doGet 카탈로그) | 'csv'(게시된 '카탈로그_공개' 시트)
   CSV_URL: '',
   MAX_SELECT: 3,
@@ -356,7 +356,7 @@ function renderNotes(p){
   const li = [];
   li.push('<b>First-come, first-served.</b> Submit early — this is a request and placement is not guaranteed.');
   li.push('Your preferred course may already be full, so <b>rank up to 3 courses</b>; we consider them in your priority order.');
-  li.push('Submitting this form is <b>only a request to add courses</b>. Your current registration stays unchanged until staff confirm — <b>please do not drop any course yourself</b> in the meantime.');
+  li.push('Submitting this form is <b>only a request to add courses</b>. Your current registration stays unchanged until staff confirm.');
   if (w === '6-Week') {
     li.push('As a 6-week student you may also pick <b>4-week</b> courses, but you <b>must keep at least one 6-week course</b>.');
     li.push('<b>KLI (Korean Language):</b> only <b>1 seat</b> across all levels and placement is required — choose your level when you select it.');
