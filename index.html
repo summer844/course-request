@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Course Request — YISS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#003876; --navy2:#0052a3; --ink:#1a2233; --muted:#6b7480;
+    --line:#e3e8ef; --grey:#f5f7fa; --white:#fff;
+    --green:#1e7e44; --lgreen:#eaf5ee; --red:#c0392b; --lred:#fdeeec;
+    --amber:#b7791f; --lamber:#fff6e6;
+    --shadow:0 2px 14px rgba(0,56,118,.08);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:#eef1f7;font-size:14px;line-height:1.55;padding:0 0 60px;}
+  .mono{font-family:'DM Mono',monospace;}
+
+  header{background:var(--navy);color:#fff;padding:20px 18px;position:relative;}
+  header::after{content:'';position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--navy2);}
+  header h1{font-size:17px;font-weight:700;letter-spacing:.01em;}
+  header .sub{font-size:12px;color:#a9c3e6;margin-top:3px;}
+
+  .wrap{max-width:680px;margin:0 auto;padding:18px 16px;}
+  .banner{background:var(--lamber);border:1px solid #f0dcae;color:#7a5a12;border-radius:10px;padding:12px 14px;font-size:12.5px;margin-bottom:16px;line-height:1.6;}
+  .banner b{color:#5a4209;}
+
+  .card{background:#fff;border-radius:12px;box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden;}
+  .card-head{padding:13px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;}
+  .card-head h2{font-size:13px;font-weight:700;color:var(--navy);}
+  .card-head .step{width:22px;height:22px;border-radius:6px;background:var(--navy);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .card-body{padding:18px;}
+
+  .field{margin-bottom:14px;} .field:last-child{margin-bottom:0;}
+  label.lbl{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;}
+  label.lbl .req{color:var(--red);}
+  input[type=text],input[type=email],textarea,select{width:100%;border:1.5px solid var(--line);border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit;color:var(--ink);outline:none;transition:border-color .15s;background:#fff;}
+  input:focus,textarea:focus,select:focus{border-color:var(--navy);}
+  textarea{resize:vertical;min-height:64px;}
+  .hint{font-size:11px;color:var(--muted);margin-top:5px;}
+  .hint b{color:var(--navy2);}
+
+  .verify-btn{width:100%;background:var(--navy);color:#fff;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:4px;transition:background .15s;}
+  .verify-btn:hover:not(:disabled){background:var(--navy2);}
+  .verify-btn:disabled{background:#aab4c2;cursor:not-allowed;}
+
+  .profile{background:#f0f5fc;border:1px solid #cfe0f5;border-radius:10px;padding:13px 15px;margin-top:4px;display:none;}
+  .profile.show{display:block;}
+  .profile .greet{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:7px;}
+  .profile .pills{display:flex;flex-wrap:wrap;gap:6px;}
+  .pill{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:#fff;border:1px solid #cfe0f5;color:var(--navy2);}
+  .pill.credit{background:var(--navy);color:#fff;border-color:var(--navy);}
+  .profile .gnote{margin-top:9px;font-size:11.5px;color:#8a5a09;background:var(--lamber);border-radius:6px;padding:7px 10px;line-height:1.5;}
+  .change-link{font-size:11px;color:var(--navy2);text-decoration:underline;cursor:pointer;margin-top:8px;display:inline-block;}
+
+  .priority-callout{background:linear-gradient(135deg,#003876,#0052a3);color:#fff;border-radius:10px;padding:13px 15px;margin:0 18px 12px;font-size:12.5px;line-height:1.6;}
+  .priority-callout b{color:#ffd98a;}
+  .priority-callout .big{display:block;font-size:13.5px;font-weight:700;margin-bottom:3px;}
+
+  .notes-card .card-head .step{background:var(--amber);}
+  .notes-list{margin:0;padding-left:18px;}
+  .notes-list li{font-size:12.5px;color:var(--ink);line-height:1.65;margin:7px 0;}
+  .notes-list b{color:var(--navy);}
+
+  /* Session tabs */
+  .tabs{display:flex;gap:6px;padding:0 18px 12px;}
+  .tab{flex:1;padding:10px;border:1.5px solid var(--line);background:#fff;border-radius:9px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s;}
+  .tab:hover{border-color:var(--navy2);}
+  .tab.active{background:var(--navy);border-color:var(--navy);color:#fff;}
+
+  /* Filter bar */
+  .filters{display:flex;flex-wrap:wrap;gap:8px;padding:0 18px 10px;}
+  .filters input{flex:2;min-width:150px;}
+  .filters select{flex:1;min-width:120px;}
+
+  .courses-meta{display:flex;justify-content:space-between;align-items:center;padding:0 18px 8px;font-size:12px;color:var(--muted);}
+  .sel-count{font-weight:700;color:var(--navy);}
+  .sel-count.full{color:var(--red);}
+
+  .course-list{padding:0 12px 8px;max-height:none;}
+  .course{display:flex;align-items:flex-start;gap:12px;border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;margin:6px 0;cursor:pointer;transition:border-color .15s,background .15s;}
+  .course:hover{border-color:var(--navy2);background:var(--grey);}
+  .course.selected{border-color:var(--navy);background:#f0f5fc;}
+  .course-check{width:24px;height:24px;border:2px solid var(--line);border-radius:50%;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:transparent;}
+  .course.selected .course-check{background:var(--navy);border-color:var(--navy);color:#fff;}
+  .course-main{flex:1;min-width:0;}
+  .course-title{font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:3px;}
+  .course-code{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);}
+  .course-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
+  .tag{font-size:10.5px;padding:2px 7px;border-radius:5px;background:var(--grey);color:var(--muted);font-weight:500;}
+  .tag.field{background:#eef2fb;color:var(--navy2);}
+  .tag.kli{background:var(--lamber);color:var(--amber);font-weight:700;}
+  .kli-level{margin-top:9px;}
+  .kli-level label{font-size:11px;font-weight:600;color:var(--amber);display:block;margin-bottom:4px;}
+
+  .pri-card .card-head .step{background:var(--amber);}
+  .pri-empty{font-size:12.5px;color:var(--muted);text-align:center;padding:8px 0;}
+  .pri-row{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;margin:7px 0;background:#fff;}
+  .pri-rank{flex-shrink:0;width:48px;font-size:12px;font-weight:700;color:#fff;background:var(--navy);border-radius:7px;text-align:center;padding:6px 0;}
+  .pri-rank.r2{background:var(--navy2);} .pri-rank.r3{background:#3f7ac4;}
+  .pri-info{flex:1;min-width:0;}
+  .pri-title{font-size:13px;font-weight:600;}
+  .pri-code{font-family:'DM Mono',monospace;font-size:10.5px;color:var(--muted);}
+  .pri-ctrl{display:flex;gap:4px;flex-shrink:0;}
+  .pri-btn{width:30px;height:30px;border:1px solid var(--line);background:var(--grey);border-radius:7px;cursor:pointer;font-size:14px;color:var(--navy);display:flex;align-items:center;justify-content:center;}
+  .pri-btn:hover{background:#e2e8f2;} .pri-btn:disabled{opacity:.35;cursor:not-allowed;}
+  .pri-btn.x{color:var(--red);}
+
+  .ack{display:flex;align-items:flex-start;gap:10px;cursor:pointer;background:var(--lamber);border:1px solid #f0dcae;border-radius:8px;padding:12px 14px;margin-top:4px;}
+  .ack input{margin-top:2px;width:16px;height:16px;flex-shrink:0;accent-color:var(--navy);}
+  .ack span{font-size:12px;color:#7a5a12;line-height:1.55;}
+  .ack b{color:#5a4209;}
+
+  .submit-btn{width:100%;background:var(--navy);color:#fff;border:none;border-radius:10px;padding:15px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;transition:background .15s;letter-spacing:.02em;}
+  .submit-btn:hover:not(:disabled){background:var(--navy2);}
+  .submit-btn:disabled{background:#aab4c2;cursor:not-allowed;}
+
+  .msg{border-radius:8px;padding:12px 14px;font-size:12.5px;margin-bottom:12px;display:none;line-height:1.6;}
+  .msg.err{background:var(--lred);color:var(--red);border:1px solid #f3c9c3;display:block;}
+  .loading{text-align:center;color:var(--muted);font-size:13px;padding:30px 0;}
+
+  #gated{display:none;}
+
+  #success{display:none;text-align:center;padding:36px 20px;}
+  #success .ok-ic{width:60px;height:60px;border-radius:50%;background:var(--lgreen);color:var(--green);font-size:30px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;}
+  #success h2{font-size:18px;color:var(--navy);margin-bottom:8px;}
+  #success p{font-size:13px;color:var(--muted);line-height:1.7;}
+  #success .summary{background:var(--grey);border-radius:10px;padding:14px 16px;margin:18px 0;text-align:left;font-size:12.5px;}
+  #success .summary li{margin:5px 0;list-style:none;display:flex;gap:8px;align-items:center;}
+  #success .summary .rk{font-size:10px;font-weight:700;color:#fff;background:var(--navy);border-radius:5px;padding:2px 7px;flex-shrink:0;}
+
+  .footnote{font-size:11px;color:var(--muted);text-align:center;line-height:1.6;margin-top:8px;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1 id="hdr-title">Course Request — Remaining Seats</h1>
+  <div class="sub" id="hdr-sub">YISS 2026 · Office of International Affairs</div>
+</header>
+
+<div class="wrap">
+  <div class="banner" id="notice" style="display:none;"></div>
+
+  <div id="form-area">
+    <div class="msg err" id="err-box" style="display:none"></div>
+
+    <!-- STEP 1: Verify -->
+    <div class="card">
+      <div class="card-head"><div class="step">1</div><h2>Verify Yourself</h2></div>
+      <div class="card-body">
+        <div id="verify-fields">
+          <div class="field">
+            <label class="lbl" id="id-label">Student ID <span class="req">*</span></label>
+            <input type="text" id="f-id" placeholder="e.g. 2026840001" autocomplete="off">
+          </div>
+          <div class="field">
+            <label class="lbl">Email <span class="req">*</span></label>
+            <input type="email" id="f-email" placeholder="you@example.com" autocomplete="off">
+            <div class="hint"><b>Use the same email account as on Summer Apply</b> (the application page). Your confirmation will be sent there.</div>
+          </div>
+          <button class="verify-btn" id="verify-btn" onclick="verify()">Verify</button>
+        </div>
+        <div class="profile" id="profile">
+          <div class="greet" id="prof-greet"></div>
+          <div class="pills" id="prof-pills"></div>
+          <div class="gnote" id="prof-note" style="display:none;"></div>
+          <span class="change-link" onclick="resetVerify()">← Change ID</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="gated">
+      <!-- Before you submit -->
+      <div class="card notes-card" id="notes-card" style="display:none;">
+        <div class="card-head"><div class="step">!</div><h2>Before You Submit</h2></div>
+        <div class="card-body"><ul class="notes-list" id="notes-list"></ul></div>
+      </div>
+
+      <!-- STEP 2: Select -->
+      <div class="card">
+        <div class="card-head"><div class="step">2</div><h2>Select Courses</h2></div>
+        <div class="priority-callout">
+          <span class="big">⚠️ The order you select is your priority.</span>
+          Your <b>first pick is your 1st priority</b> and is considered first. You may rank up to <b>3 courses</b>.
+          <b>Tap a selected course again to remove it.</b>
+        </div>
+        <div class="tabs" id="tabs" style="display:none;"></div>
+        <div class="filters">
+          <input type="text" id="f-search" placeholder="Search code or title…" oninput="renderCourses()">
+          <select id="f-field" onchange="renderCourses()"><option value="">All fields</option></select>
+          <select id="f-time" onchange="renderCourses()"><option value="">All times</option></select>
+        </div>
+        <div class="courses-meta">
+          <span id="courses-meta-left">—</span>
+          <span class="sel-count" id="sel-summary">0 / 3 selected</span>
+        </div>
+        <div class="course-list" id="course-list"><div class="loading">Loading…</div></div>
+      </div>
+
+      <!-- Priority panel -->
+      <div class="card pri-card">
+        <div class="card-head"><div class="step">★</div><h2>Your Priority Order</h2></div>
+        <div class="card-body" id="priority-body">
+          <div class="pri-empty">Select courses above — they'll appear here in priority order.</div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Confirm -->
+      <div class="card">
+        <div class="card-head"><div class="step">3</div><h2>Notes &amp; Confirm</h2></div>
+        <div class="card-body">
+          <div class="field">
+            <label class="lbl">Notes (optional)</label>
+            <textarea id="f-note" placeholder="Anything we should know…"></textarea>
+          </div>
+          <label class="ack">
+            <input type="checkbox" id="f-ack">
+            <span>I understand that <b>the order I selected is my priority order</b>, that this request is
+            <b>first-come, first-served and is not guaranteed</b>, and that seats are assigned by staff
+            after review. I will check my email regularly for any follow-up.</span>
+          </label>
+        </div>
+      </div>
+
+      <button class="submit-btn" id="submit-btn" onclick="submitForm()">Submit Request</button>
+      <div class="footnote" id="footnote">Questions? summer@yonsei.ac.kr</div>
+    </div>
+  </div>
+
+  <div id="success">
+    <div class="ok-ic">✓</div>
+    <h2>Request Received</h2>
+    <p>We've recorded your course request in priority order. A confirmation email is on its way.</p>
+    <ul class="summary" id="success-summary"></ul>
+    <p class="footnote">Staff will review and follow up by email regarding seat assignment — please check your inbox regularly.</p>
+  </div>
+
+  <div id="closed" style="display:none;text-align:center;padding:44px 20px;">
+    <div style="width:60px;height:60px;border-radius:50%;background:var(--grey);color:var(--muted);font-size:28px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">🔒</div>
+    <h2 style="color:var(--navy);font-size:18px;margin-bottom:8px;">Course requests are closed</h2>
+    <p style="color:var(--muted);font-size:13px;line-height:1.7;">This request round has ended.<br>If you have questions, please contact <span id="closed-contact"></span>.</p>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   CONFIG — 운영 시 이 블록만 수정
+   ════════════════════════════════════════════════════════════════ */
+const CONFIG = {
+  API_URL: '',
+  READ_MODE: 'api',            // 'api'(권장: doGet 카탈로그) | 'csv'(게시된 '카탈로그_공개' 시트)
+  CSV_URL: '',
+  MAX_SELECT: 3,
+  ID_LABEL: 'Student ID',
+  CREDITS_PER_COURSE: 3,
+  DEADLINE: '2026-06-12T23:59:59+09:00',  // 백엔드 CFG.DEADLINE_ISO 와 동일하게 유지
+  DEADLINE_TEXT: 'June 12, 23:59 (KST)',  // 안내문 표시용
+  FULL_REFUND_TEXT: 'June 28',            // 100% 환불 마감일
+  PROGRAM_LABEL: 'YISS 2026 · Office of International Affairs',
+  HEADER_TITLE: 'Course Request — Remaining Seats',
+  NOTICE: '<b>Please note:</b> course requests are handled on a <b>first-come, first-served</b> basis and cannot be guaranteed. If we need to confirm anything, we will contact you by <b>email</b> — please check your inbox frequently.',
+  CONTACT: 'summer@yonsei.ac.kr',
+};
+
+const DEMO = !CONFIG.API_URL;
+const DEMO_ROSTER = {
+  '2026840001': {name:'Jane Doe', weeks:'6-Week', remainingCredits:6, group:'UCEAP', email:'', note:'UCEAP: 6-week, min. 6 credits recommended'},
+  '2026840002': {name:'Min Park', weeks:'4-Week', remainingCredits:3, group:'(Individual)', email:'', note:''},
+};
+const DEMO_COURSES = [
+  {학정번호:'IEE3306-02', 과목명:'Korean Cinema', 분야:'Korean Studies', 주차:'6-Week', 시간:'09:00~10:40', 학점:3, 상태:'open', 레벨옵션:''},
+  {학정번호:'IEE2028-01', 과목명:'Marketing', 분야:'Business & Economics', 주차:'6-Week', 시간:'11:00~12:40', 학점:3, 상태:'open', 레벨옵션:''},
+  {학정번호:'IEE3593-01', 과목명:'Introduction to Big Data Analysis', 분야:'Science & Technology', 주차:'6-Week', 시간:'11:00~12:40', 학점:3, 상태:'open', 레벨옵션:''},
+  {학정번호:'PSY2103-12', 과목명:'Introduction to Psychology', 분야:'Social Sciences', 주차:'6-Week', 시간:'09:00~10:40', 학점:3, 상태:'open', 레벨옵션:''},
+  {학정번호:'KLI', 과목명:'Korean Language (KLI) — placement required', 분야:'Korean Language', 주차:'6-Week', 시간:'13:30~15:10', 학점:3, 상태:'open',
+   레벨옵션:'IEE1006-01:Beginning Korean 1 | IEE1007-01:Beginning Korean 2 | IEE1008-01:Beginning Korean 3 | IEE2014-01:Intermediate Korean 1 | IEE2015-01:Intermediate Korean 2 | IEE2016-01:Intermediate Korean 3 | IEE3009-01:Advanced Korean 1 | IEE3010-01:Advanced Korean 2'},
+  {학정번호:'IEE2095-02', 과목명:'Korean Fashion Trend', 분야:'Korean Studies', 주차:'4-Week', 시간:'13:00~15:30', 학점:3, 상태:'open', 레벨옵션:''},
+  {학정번호:'ECO3112-11', 과목명:'Korean Economy', 분야:'Business & Economics', 주차:'4-Week', 시간:'09:00~11:30', 학점:3, 상태:'open', 레벨옵션:''},
+];
+
+let COURSES = [], PROFILE = null, activeTab = '6-Week';
+let selectedOrder = [];     // 우선순위 순서 (codes)
+let kliLevel = '';          // KLI 선택 레벨 코드
+const ORD = i => (['1st','2nd','3rd'][i] || (i+1)+'th');
+
+window.addEventListener('load', () => {
+  document.getElementById('hdr-title').textContent = CONFIG.HEADER_TITLE;
+  document.getElementById('hdr-sub').textContent = CONFIG.PROGRAM_LABEL;
+  document.getElementById('footnote').textContent = 'Questions? ' + CONFIG.CONTACT;
+
+  if (CONFIG.DEADLINE && Date.now() > new Date(CONFIG.DEADLINE).getTime()) {
+    document.getElementById('form-area').style.display = 'none';
+    const cc = document.getElementById('closed-contact'); if (cc) cc.textContent = CONFIG.CONTACT;
+    document.getElementById('closed').style.display = 'block';
+    return;
+  }
+  document.getElementById('id-label').innerHTML = CONFIG.ID_LABEL + ' <span class="req">*</span>';
+  if (CONFIG.NOTICE){ const n=document.getElementById('notice'); n.innerHTML=CONFIG.NOTICE; n.style.display='block'; }
+});
+
+/* ── Verify ───────────────────────────────────────────── */
+async function verify(){
+  const id=val('f-id'), email=val('f-email');
+  const err=document.getElementById('err-box'); err.style.display='none';
+  const probs=[];
+  if(!id) probs.push('Student ID is required.');
+  if(!email||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) probs.push('A valid email is required.');
+  if(probs.length){ err.innerHTML=probs.join('<br>'); err.style.display='block'; return; }
+
+  const btn=document.getElementById('verify-btn'); btn.disabled=true; btn.textContent='Verifying…';
+  try{
+    let prof;
+    if(DEMO){ const r=DEMO_ROSTER[id]; prof = r ? {found:true,...r,ruleWeeks:'',minCourses:0} : {found:false,reason:'notfound'}; }
+    else { const res=await fetch(CONFIG.API_URL,{method:'POST',body:JSON.stringify({action:'lookup',id,email})}); prof=await res.json(); }
+    if(!prof.found){
+      err.textContent=(prof.reason==='mismatch')
+        ? 'Your Student ID and email do not match our records.'
+        : 'We could not find this Student ID. Please use the ID from the email we sent, or contact '+CONFIG.CONTACT+'.';
+      err.style.display='block'; btn.disabled=false; btn.textContent='Verify'; return;
+    }
+    PROFILE=prof; showProfile(prof); renderNotes(prof); await loadCourses();
+    document.getElementById('gated').style.display='block';
+    document.getElementById('verify-fields').style.display='none';
+    btn.disabled=false; btn.textContent='Verify';
+  }catch(e){ err.textContent='Something went wrong. Please try again in a moment.'; err.style.display='block'; btn.disabled=false; btn.textContent='Verify'; }
+}
+
+function showProfile(p){
+  const eff=p.ruleWeeks||p.weeks;
+  document.getElementById('prof-greet').textContent='Hi'+(p.name?', '+p.name:'')+'!';
+  const pills=[];
+  if(p.group) pills.push('<span class="pill">'+esc(p.group)+'</span>');
+  if(eff) pills.push('<span class="pill">'+esc(eff)+' student</span>');
+  if(p.remainingCredits>0){
+    const n=Math.floor(p.remainingCredits/CONFIG.CREDITS_PER_COURSE);
+    pills.push('<span class="pill credit">Up to '+n+' course'+(n===1?'':'s')+' ('+p.remainingCredits+' credits left)</span>');
+  }
+  document.getElementById('prof-pills').innerHTML=pills.join('');
+  const nb=document.getElementById('prof-note');
+  if(p.note){ nb.textContent=p.note; nb.style.display='block'; } else nb.style.display='none';
+  document.getElementById('profile').classList.add('show');
+}
+function resetVerify(){
+  PROFILE=null; selectedOrder=[]; kliLevel=''; COURSES=[];
+  document.getElementById('gated').style.display='none';
+  document.getElementById('profile').classList.remove('show');
+  document.getElementById('notes-card').style.display='none';
+  document.getElementById('verify-fields').style.display='block';
+}
+
+function renderNotes(p){
+  const w = p.ruleWeeks || p.weeks;
+  const li = [];
+  li.push('<b>First-come, first-served.</b> Submit early — this is a request and placement is not guaranteed.');
+  li.push('Your preferred course may already be full, so <b>rank up to 3 courses</b>; we consider them in your priority order.');
+  li.push('Submitting this form is <b>only a request to add courses</b>. Your current registration stays unchanged until staff confirm — <b>please do not drop any course yourself</b> in the meantime.');
+  if (w === '6-Week') {
+    li.push('As a 6-week student you may also pick <b>4-week</b> courses, but you <b>must keep at least one 6-week course</b>.');
+    li.push('<b>KLI (Korean Language):</b> only <b>1 seat</b> across all levels and placement is required — choose your level when you select it.');
+  }
+  li.push('To reduce your course load, apply for a refund through <b>Summer Apply</b> (the application page). A <b>full (100%) refund is available until ' + esc(CONFIG.FULL_REFUND_TEXT) + '</b>; partial afterward.');
+  li.push('<b>Submission deadline: ' + esc(CONFIG.DEADLINE_TEXT) + '.</b>');
+  document.getElementById('notes-list').innerHTML = li.map(x => '<li>' + x + '</li>').join('');
+  document.getElementById('notes-card').style.display = 'block';
+}
+
+/* ── Load courses ─────────────────────────────────────── */
+async function loadCourses(){
+  try{
+    if(DEMO) COURSES=DEMO_COURSES;
+    else if(CONFIG.READ_MODE==='api'){ const res=await fetch(CONFIG.API_URL+'?action=courses&_t='+Date.now()); COURSES=(await res.json()).courses||[]; }
+    else { const res=await fetch(CONFIG.CSV_URL+'&_t='+Date.now()); COURSES=parseCSV(await res.text()); }
+    setupTabs(); renderCourses(); renderPriority();
+  }catch(e){ document.getElementById('course-list').innerHTML='<div class="loading" style="color:var(--red)">Could not load courses. Please refresh.</div>'; }
+}
+function parseCSV(text){
+  const rows=[]; let row=[],cur='',q=false;
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(q){ if(c==='"'&&text[i+1]==='"'){cur+='"';i++;} else if(c==='"'){q=false;} else cur+=c; }
+    else{ if(c==='"')q=true; else if(c===','){row.push(cur);cur='';} else if(c==='\n'){row.push(cur);rows.push(row);row=[];cur='';} else if(c==='\r'){} else cur+=c; } }
+  if(cur!==''||row.length){row.push(cur);rows.push(row);}
+  const header=rows.shift().map(h=>h.trim());
+  return rows.filter(r=>r.some(c=>c.trim()!=='')).map(r=>{const o={};header.forEach((h,i)=>o[h]=(r[i]||'').trim());return o;});
+}
+
+/* ── Session tabs (6주=4주+6주 / 4주=4주만) ─────────────── */
+function allowedSessions(){
+  const w = PROFILE ? (PROFILE.ruleWeeks||PROFILE.weeks) : '';
+  if (w === '6-Week') return ['6-Week','4-Week'];   // 6주 학생은 4주도 가능
+  if (w === '4-Week') return ['4-Week'];
+  return ['6-Week','4-Week'];
+}
+function setupTabs(){
+  const sessions = allowedSessions();
+  const tabsEl = document.getElementById('tabs');
+  if (sessions.length > 1){
+    activeTab = '6-Week';
+    tabsEl.style.display='flex';
+    tabsEl.innerHTML = sessions.map(s =>
+      '<button class="tab '+(s===activeTab?'active':'')+'" onclick="switchTab(\''+s+'\')">'+s+' courses</button>').join('');
+  } else {
+    activeTab = sessions[0];
+    tabsEl.style.display='none';
+  }
+  buildFilterOptions();
+}
+function switchTab(s){
+  activeTab = s;
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active', b.textContent.indexOf(s)===0));
+  document.getElementById('f-field').value=''; document.getElementById('f-time').value=''; document.getElementById('f-search').value='';
+  buildFilterOptions(); renderCourses();
+}
+function isStaffClosed(c){ return (c.상태||'open').toLowerCase()==='closed'; }
+function sessionCourses(){ return COURSES.filter(c => c.주차===activeTab && !isStaffClosed(c)); }
+
+function buildFilterOptions(){
+  const set = sessionCourses();
+  const fields=[...new Set(set.map(c=>c.분야).filter(Boolean))].sort();
+  const times =[...new Set(set.map(c=>c.시간).filter(Boolean))].sort();
+  document.getElementById('f-field').innerHTML='<option value="">All fields</option>'+fields.map(f=>'<option>'+esc(f)+'</option>').join('');
+  document.getElementById('f-time').innerHTML ='<option value="">All times</option>'+times.map(t=>'<option>'+esc(t)+'</option>').join('');
+}
+
+function credits(c){ return parseInt(c.학점)||CONFIG.CREDITS_PER_COURSE; }
+function rankOf(code){ const i=selectedOrder.indexOf(code); return i<0?0:i+1; }
+function findCourse(code){ return COURSES.find(x=>(x.학정번호||'')===code); }
+function kliLevels(c){
+  // "CODE:Name | CODE:Name" → [{code,name}]
+  return String(c.레벨옵션||'').split('|').map(p=>{const [cd,...n]=p.split(':');return {code:(cd||'').trim(), name:n.join(':').trim()};}).filter(x=>x.code);
+}
+
+function renderCourses(){
+  const list=document.getElementById('course-list');
+  const q=val('f-search').toLowerCase(), ff=val('f-field'), ft=val('f-time');
+  let set=sessionCourses();
+  if(ff) set=set.filter(c=>c.분야===ff);
+  if(ft) set=set.filter(c=>c.시간===ft);
+  if(q)  set=set.filter(c=>((c.학정번호||'')+' '+(c.과목명||'')).toLowerCase().includes(q));
+
+  document.getElementById('courses-meta-left').textContent = set.length+' course'+(set.length===1?'':'s')+' · '+activeTab;
+
+  if(!set.length){ list.innerHTML='<div class="loading">No matching courses.</div>'; updateSel(); return; }
+  list.innerHTML=set.map(c=>{
+    const code=c.학정번호||'', rk=rankOf(code), cr=credits(c), isKli=!!String(c.레벨옵션||'').trim();
+    const tags=[];
+    if(c.분야) tags.push('<span class="tag field">'+esc(c.분야)+'</span>');
+    tags.push('<span class="tag">'+esc(c.주차)+'</span>');
+    tags.push('<span class="tag">'+cr+' cr</span>');
+    if(c.시간) tags.push('<span class="tag mono">'+esc(c.시간)+'</span>');
+    if(isKli) tags.push('<span class="tag kli">1 seat · level required</span>');
+    let levelSel='';
+    if(isKli && rk){
+      const opts=kliLevels(c).map(l=>'<option value="'+esc(l.code)+'"'+(l.code===kliLevel?' selected':'')+'>'+esc(l.name)+' ('+esc(l.code)+')</option>').join('');
+      levelSel='<div class="kli-level" onclick="event.stopPropagation()"><label>Select your Korean level <span style="color:var(--red)">*</span></label>'+
+        '<select onchange="setKli(this.value)"><option value="">— choose level —</option>'+opts+'</select></div>';
+    }
+    return '<div class="course '+(rk?'selected':'')+'" data-code="'+esc(code)+'" onclick="toggle(\''+esc(code)+'\')">'+
+      '<div class="course-check">'+(rk||'')+'</div>'+
+      '<div class="course-main"><div class="course-title">'+esc(c.과목명||'(untitled)')+'</div>'+
+      '<div class="course-code">'+esc(code)+'</div><div class="course-tags">'+tags.join('')+'</div>'+levelSel+'</div></div>';
+  }).join('');
+  updateSel();
+}
+
+function toggle(code){
+  const i=selectedOrder.indexOf(code);
+  if(i>=0){ selectedOrder.splice(i,1); if(code==='KLI') kliLevel=''; }
+  else{ if(selectedOrder.length>=CONFIG.MAX_SELECT){ flashSel(); return; } selectedOrder.push(code); }
+  renderCourses(); renderPriority();
+}
+function setKli(v){ kliLevel=v; renderPriority(); }
+function move(code,dir){
+  const i=selectedOrder.indexOf(code), j=i+dir;
+  if(i<0||j<0||j>=selectedOrder.length) return;
+  [selectedOrder[i],selectedOrder[j]]=[selectedOrder[j],selectedOrder[i]];
+  renderCourses(); renderPriority();
+}
+function removeSel(code){ const i=selectedOrder.indexOf(code); if(i>=0) selectedOrder.splice(i,1); if(code==='KLI') kliLevel=''; renderCourses(); renderPriority(); }
+
+function kliName(code){ const c=findCourse('KLI'); const f=kliLevels(c).find(l=>l.code===code); return f?f.name:code; }
+
+function renderPriority(){
+  const body=document.getElementById('priority-body');
+  if(!selectedOrder.length){ body.innerHTML='<div class="pri-empty">Select courses above — they\'ll appear here in priority order.</div>'; return; }
+  body.innerHTML=selectedOrder.map((code,idx)=>{
+    const c=findCourse(code)||{}, rank=idx+1;
+    let title=esc(c.과목명||code), sub=esc(code);
+    if(code==='KLI'){ title='Korean Language (KLI)'; sub = kliLevel ? (kliName(kliLevel)+' ('+kliLevel+')') : '⚠ choose a level above'; }
+    return '<div class="pri-row">'+
+      '<div class="pri-rank r'+rank+'">'+ORD(idx)+'</div>'+
+      '<div class="pri-info"><div class="pri-title">'+title+'</div><div class="pri-code">'+sub+'</div></div>'+
+      '<div class="pri-ctrl">'+
+        '<button class="pri-btn" onclick="move(\''+esc(code)+'\',-1)" '+(idx===0?'disabled':'')+'>▲</button>'+
+        '<button class="pri-btn" onclick="move(\''+esc(code)+'\',1)" '+(idx===selectedOrder.length-1?'disabled':'')+'>▼</button>'+
+        '<button class="pri-btn x" onclick="removeSel(\''+esc(code)+'\')">✕</button>'+
+      '</div></div>';
+  }).join('');
+}
+
+function updateSel(){
+  const el=document.getElementById('sel-summary');
+  el.textContent=selectedOrder.length+' / '+CONFIG.MAX_SELECT+' selected';
+  el.classList.toggle('full', selectedOrder.length>=CONFIG.MAX_SELECT);
+}
+function flashSel(){ const e=document.getElementById('sel-summary'); e.style.color='var(--red)'; setTimeout(()=>e.style.color='',400); }
+
+/* ── Submit ───────────────────────────────────────────── */
+async function submitForm(){
+  const err=document.getElementById('err-box'); err.style.display='none';
+  const ack=document.getElementById('f-ack').checked, note=val('f-note');
+  const probs=[];
+  if(selectedOrder.length===0) probs.push('Select at least one course.');
+  if(selectedOrder.indexOf('KLI')>=0 && !kliLevel) probs.push('Please choose your Korean level for KLI.');
+  if(!ack) probs.push('Please check the acknowledgement box (including the priority-order notice).');
+  if(probs.length){ err.innerHTML=probs.join('<br>'); err.style.display='block'; err.scrollIntoView({behavior:'smooth',block:'center'}); return; }
+
+  const codes=[...selectedOrder];
+  const titles=codes.map(c=>{ if(c==='KLI') return 'KLI — '+kliName(kliLevel)+' ('+kliLevel+')'; const f=findCourse(c); return f?(f.학정번호+' — '+f.과목명):c; });
+  const btn=document.getElementById('submit-btn'); btn.disabled=true; btn.textContent='Submitting…';
+  const payload={ id:val('f-id'), email:val('f-email'), courses:codes, kliLevel, note };
+
+  if(DEMO){ setTimeout(()=>showSuccess(titles),600); return; }
+  try{
+    const res=await fetch(CONFIG.API_URL,{method:'POST',body:JSON.stringify(payload)});
+    const json=await res.json();
+    if(json.ok){ showSuccess(titles); }
+    else if(json.error==='closed'){
+      document.getElementById('form-area').style.display='none';
+      const cc=document.getElementById('closed-contact'); if(cc) cc.textContent=CONFIG.CONTACT;
+      document.getElementById('closed').style.display='block'; window.scrollTo({top:0,behavior:'smooth'});
+    }
+    else throw new Error(json.error||'unknown');
+  }catch(e){ err.textContent='Submission error: '+e.message+' — please try again or contact '+CONFIG.CONTACT+'.'; err.style.display='block'; btn.disabled=false; btn.textContent='Submit Request'; }
+}
+function showSuccess(titles){
+  document.getElementById('form-area').style.display='none';
+  document.getElementById('success-summary').innerHTML=titles.map((t,i)=>'<li><span class="rk">'+ORD(i)+'</span> '+esc(t)+'</li>').join('');
+  document.getElementById('success').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function val(id){return document.getElementById(id).value.trim();}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+</script>
+</body>
+</html>
