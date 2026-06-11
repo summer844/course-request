@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Course Request — YISS</title>
+<title>Course Add Preference — YISS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -137,7 +137,7 @@
 <body>
 
 <header>
-  <h1 id="hdr-title">Course Request — Remaining Seats</h1>
+  <h1 id="hdr-title">Course Add Preference — Remaining Seats</h1>
   <div class="sub" id="hdr-sub">YISS 2026 · Office of International Affairs</div>
 </header>
 
@@ -159,7 +159,7 @@
           <div class="field">
             <label class="lbl">Email <span class="req">*</span></label>
             <input type="email" id="f-email" placeholder="you@example.com" autocomplete="off">
-            <div class="hint"><b>Use the same email account as on Summer Apply</b> (the application page) — this is the address where you received this announcement. Your confirmation will be sent there.</div>
+            <div class="hint"><b>Use the same email account as on Summer Apply</b> (Application System) — this is the address where you received this announcement. Your confirmation will be sent there.</div>
           </div>
           <button class="verify-btn" id="verify-btn" onclick="verify()">Verify</button>
         </div>
@@ -218,30 +218,30 @@
           </div>
           <label class="ack">
             <input type="checkbox" id="f-ack">
-            <span>I understand that <b>the order I selected is my priority order</b>, that this request is
+            <span>I understand that <b>the order I selected is my priority order</b>, that this preference is
             <b>first-come, first-served and is not guaranteed</b>, and that seats are assigned by staff
             after review. I will check my email regularly for any follow-up.</span>
           </label>
         </div>
       </div>
 
-      <button class="submit-btn" id="submit-btn" onclick="submitForm()">Submit Request</button>
+      <button class="submit-btn" id="submit-btn" onclick="submitForm()">Submit Preferences</button>
       <div class="footnote" id="footnote">Questions? summer@yonsei.ac.kr</div>
     </div>
   </div>
 
   <div id="success">
     <div class="ok-ic">✓</div>
-    <h2>Request Received</h2>
-    <p>We've recorded your course request in priority order. A confirmation email is on its way.</p>
+    <h2>Preferences Received</h2>
+    <p>We've recorded your course preferences in priority order. A confirmation email is on its way.</p>
     <ul class="summary" id="success-summary"></ul>
     <p class="footnote">Staff will review and follow up by email regarding seat assignment — please check your inbox regularly.</p>
   </div>
 
   <div id="closed" style="display:none;text-align:center;padding:44px 20px;">
     <div style="width:60px;height:60px;border-radius:50%;background:var(--grey);color:var(--muted);font-size:28px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">🔒</div>
-    <h2 style="color:var(--navy);font-size:18px;margin-bottom:8px;">Course requests are closed</h2>
-    <p style="color:var(--muted);font-size:13px;line-height:1.7;">This request round has ended.<br>If you have questions, please contact <span id="closed-contact"></span>.</p>
+    <h2 style="color:var(--navy);font-size:18px;margin-bottom:8px;">Course preference submission is closed</h2>
+    <p style="color:var(--muted);font-size:13px;line-height:1.7;">This round has ended.<br>If you have questions, please contact <span id="closed-contact"></span>.</p>
   </div>
 </div>
 
@@ -250,18 +250,18 @@
    CONFIG — 운영 시 이 블록만 수정
    ════════════════════════════════════════════════════════════════ */
 const CONFIG = {
-  API_URL: 'https://script.google.com/macros/s/AKfycbw5Aa7Tz_zj1QvF7xLEMvnLQWTjGer5E7qTRMeuLd-vegBXgbaDtpU9XWW4tVp5WlYg5A/exec',
+  API_URL: '',
   READ_MODE: 'api',            // 'api'(권장: doGet 카탈로그) | 'csv'(게시된 '카탈로그_공개' 시트)
   CSV_URL: '',
   MAX_SELECT: 3,
   ID_LABEL: 'Student ID',
   CREDITS_PER_COURSE: 3,
-  DEADLINE: '2026-06-15T23:59:59+09:00',  // 백엔드 CFG.DEADLINE_ISO 와 동일하게 유지
-  DEADLINE_TEXT: 'June 15, 23:59 (KST)',  // 안내문 표시용
+  DEADLINE: '2026-06-15T16:00:00+09:00',  // 백엔드 CFG.DEADLINE_ISO 와 동일하게 유지
+  DEADLINE_TEXT: 'June 15, 4:00 PM (KST)',  // 안내문 표시용
   FULL_REFUND_TEXT: 'June 28',            // 100% 환불 마감일
   PROGRAM_LABEL: 'YISS 2026 · Office of International Affairs',
-  HEADER_TITLE: 'Course Request — Remaining Seats',
-  NOTICE: '<b>Please note:</b> course requests are handled on a <b>first-come, first-served</b> basis and cannot be guaranteed. If we need to confirm anything, we will contact you by <b>email</b> — please check your inbox frequently.',
+  HEADER_TITLE: 'Course Add Preference — Remaining Seats',
+  NOTICE: '<b>Please note:</b> course preferences are handled on a <b>first-come, first-served</b> basis and cannot be guaranteed. If we need to confirm anything, we will contact you by <b>email</b> — please check your inbox frequently.',
   CONTACT: 'summer@yonsei.ac.kr',
 };
 
@@ -354,14 +354,14 @@ function resetVerify(){
 function renderNotes(p){
   const w = p.ruleWeeks || p.weeks;
   const li = [];
-  li.push('<b>First-come, first-served.</b> Submit early — this is a request and placement is not guaranteed.');
+  li.push('<b>First-come, first-served.</b> Submit early — this is a preference and placement is not guaranteed.');
   li.push('Your preferred course may already be full, so <b>rank up to 3 courses</b>; we consider them in your priority order.');
-  li.push('Submitting this form is <b>only a request to add courses</b>. Your current registration stays unchanged until staff confirm.');
+  li.push('Submitting this form <b>only records your course preferences</b>. Your current registration stays unchanged until staff confirm.');
   if (w === '6-Week') {
     li.push('As a 6-week student you may also pick <b>4-week</b> courses, but you <b>must keep at least one 6-week course</b>.');
-    li.push('<b>KLI (Korean Language):</b> only <b>1 seat</b> across all levels and placement is required — choose your level when you select it.');
+    li.push('<b>KLI (Korean Language):</b> only <b>1 seat</b> across all levels and placement is required <b>(except Beginning Korean 1, for true beginners)</b> — choose your level when you select it.');
   }
-  li.push('To reduce your course load, apply for a refund through <b>Summer Apply</b> (the application page). A <b>full (100%) refund is available until ' + esc(CONFIG.FULL_REFUND_TEXT) + '</b>; partial afterward.');
+  li.push('To reduce your course load, apply for a refund through <b>Summer Apply</b> (Application System). A <b>full (100%) refund is available until ' + esc(CONFIG.FULL_REFUND_TEXT) + '</b>; partial afterward.');
   li.push('<b>Submission deadline: ' + esc(CONFIG.DEADLINE_TEXT) + '.</b>');
   document.getElementById('notes-list').innerHTML = li.map(x => '<li>' + x + '</li>').join('');
   document.getElementById('notes-card').style.display = 'block';
@@ -533,7 +533,7 @@ async function submitForm(){
       document.getElementById('closed').style.display='block'; window.scrollTo({top:0,behavior:'smooth'});
     }
     else throw new Error(json.error||'unknown');
-  }catch(e){ err.textContent='Submission error: '+e.message+' — please try again or contact '+CONFIG.CONTACT+'.'; err.style.display='block'; btn.disabled=false; btn.textContent='Submit Request'; }
+  }catch(e){ err.textContent='Submission error: '+e.message+' — please try again or contact '+CONFIG.CONTACT+'.'; err.style.display='block'; btn.disabled=false; btn.textContent='Submit Preferences'; }
 }
 function showSuccess(titles){
   document.getElementById('form-area').style.display='none';
